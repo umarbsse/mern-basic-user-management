@@ -11,7 +11,7 @@ router.post(
     "/createuser",
     [
         body("fname", "Enter a valid first name").isLength({ min: 3 }).escape(),
-        body("lname", "Enter a valid last name").isLength({ min: 3 }).escape(),
+        body("lname", "Enter a valid last name").escape(),
         body("gender", "Enter a valid gender").escape(),
         body("email", "Enter a valid email").isEmail().escape(),
         body("password", "Password must be atleast 5 characters").isLength({ min: 5 }).escape(),
@@ -58,6 +58,62 @@ router.post(
             //console.error(error.message);
             res.status(500).json({ success,error: "Internal Server Error" });
         }
+    }
+);
+
+
+//Route 2: Authenticate a User using : POST "/api/auth/login". No required login
+router.post(
+    "/login",
+    [
+        body("email", "Enter a valid email").isEmail().escape(),
+        body("password", "Password can not be blanked").exists()
+    ],
+    async (req, res) => {
+            let success = false;
+        
+        
+        
+
+            //If ther are error return bad request and the errors
+
+            const errors = validationResult(req);
+
+            //IF VALIDATION FAILED
+            if (!errors.isEmpty()) {
+                res.status(400).send({success,  errors: errors.array() });
+            }
+            
+
+        try {
+
+            const {email,password}=req.body;
+
+            let user = await User.findOne({email});
+            if (!user) {
+                return res.status(400).json({success, error:"Please try to loging with correct creedntials"});
+            }
+            const passwordCompare = await bcrypt.compare(password, user.password);
+            if (!passwordCompare) {
+                return res.status(400).json({success, error:"Please try to loging with correct creedntials"});
+            }
+
+
+            
+            const data ={user:{id:user.id}}
+
+
+            const authToken = jwt.sign(data, JWT_SECRET);
+            success = true;
+
+
+            res.json({ success, authToken});
+            
+        } catch (error) {
+            //console.error(error.message);
+            res.status(500).send("Internal Server Error");
+        }
+
     }
 );
 
