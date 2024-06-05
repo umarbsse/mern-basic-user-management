@@ -10,6 +10,10 @@ import { useState } from "react";
 import Dashboard from "./components/Dashboard";
 import Accountsetting from "./components/Accountsetting";
 
+import UserState from './context/user/UserState';
+
+
+
 
 
 
@@ -33,7 +37,8 @@ function App() {
 
   return (
     <>
-      <BrowserRouter>
+      <UserState>
+        <BrowserRouter>
         <Navbar />
         <Alert alert={alert} />
         <div className="container">
@@ -63,7 +68,8 @@ function App() {
 
           </Routes>
         </div>
-      </BrowserRouter>
+        </BrowserRouter>
+      </UserState>
     </>
   );
 }
