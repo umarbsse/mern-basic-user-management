@@ -1,20 +1,13 @@
 import React, { useState } from "react";
-
-
 import UserContext from "./userContext";
-
-
-
-
-
 export default function UserState(props) {
-    const host = "http://localhost:5000";
+    const host = process.env.REACT_APP_BACKEND_URL;
     const userInitial = [];
-    const [userData, setUserData] = useState(userInitial);
+    const [userData, setuserData] = useState({fname: "", lname: "", gender: "", email: ""});
 
-     //Get user_data
+
+     //Get User data
      const getUserSetting = async () => {
-        console.log("Get User Data Function Called");
         //TODO API call
         const response = await fetch(`${host}/api/auth/getuser`, {
             method: "GET", // *GET, POST, PUT, DELETE, etc.
@@ -23,12 +16,13 @@ export default function UserState(props) {
               "auth-token": localStorage.getItem('token'),
             },
           });
-          const json = await response.json();
-          setUserData(Object.values(json));
-          console.log(userData);
+          const json_response = await response.json();
+          setuserData(json_response);
      };
+
+     //Update User Account Data
   return (
-    <UserContext.Provider value={{ userData, getUserSetting }}>
+    <UserContext.Provider value={{ userData,setuserData, getUserSetting }}>
       {props.children}
     </UserContext.Provider>
   )

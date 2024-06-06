@@ -9,6 +9,7 @@ import Signup from "./components/Signup";
 import { useState } from "react";
 import Dashboard from "./components/Dashboard";
 import Accountsetting from "./components/Accountsetting";
+import Changepassword from "./components/Changepassword";
 
 import UserState from './context/user/UserState';
 
@@ -56,7 +57,8 @@ function App() {
             <Route path="/dashboard" element={<Dashboard showAlert={showAlert} />} />
             
             <Route path="/accountsetting" element={ <Accountsetting showAlert={showAlert}  /> } />
-            <Route path="/changepassword" element={ <Accountsetting showAlert={showAlert}  /> } />
+            <Route path="/changepassword" element={ <Changepassword showAlert={showAlert}  /> } />
+
             
             
             

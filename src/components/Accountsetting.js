@@ -9,7 +9,7 @@ export default function Accountsetting(props) {
   
   const context = useContext(userContext);
 
-  const { userData, getUserSetting } = context;
+  const { userData,setuserData, getUserSetting } = context;
 
 
   let navigate = useNavigate();
@@ -82,25 +82,20 @@ export default function Accountsetting(props) {
     seCredentials({...credentials,[e.target.name]:e.target.value})
   }
   return (
-    <div className='mt-2'>
-
-      
-
-
-
-      <h2 className='my-2'>Account Setting</h2>
-      <form  onSubmit={handleSubmit}>
+    <div>
+      <h2>Account Setting</h2>
+      <form onSubmit={handleSubmit}>
         <div className="mb-3">
           <label htmlFor="fname" className="form-label">First Name</label>
-          <input type="text" required className="form-control" id="fname"  value={accountdata.fname} name="fname" onChange={onChange}  aria-describedby="fname"/>
+          <input type="text" required className="form-control" id="fname"  value={userData.fname} name="fname" onChange={onChange}  aria-describedby="fname"/>
         </div>
         <div className="mb-3">
           <label htmlFor="lname" className="form-label">Last Name</label>
-          <input type="text" className="form-control" id="lname" name="lname" onChange={onChange}  aria-describedby="lname"/>
+          <input type="text" className="form-control" id="lname" name="lname" value={userData.lname} onChange={onChange}  aria-describedby="lname"/>
         </div>
         <div className="mb-3">
           <label htmlFor="gender" className="form-label">Gender</label>
-          <select required className="form-select" name='gender'  onChange={onChange} aria-label="Default select example">
+          <select required className="form-select" name='gender' value={userData.gender} onChange={onChange} aria-label="Default select example">
             <option value="">--Select--</option>
             <option value="male">Male</option>
             <option value="female">Female</option>
@@ -109,21 +104,12 @@ export default function Accountsetting(props) {
         </div>
         <div className="mb-3">
           <label htmlFor="email" className="form-label">Email address</label>
-          <input type="email" required  className="form-control" id="email" name="email" onChange={onChange}  aria-describedby="emailHelp"/>
+          <input type="email" required  className="form-control" id="email" name="email"  value={userData.email}  onChange={onChange}  aria-describedby="emailHelp"/>
         </div>
         <button type="submit" className="btn btn-primary">Submit</button>
       </form>
       
       
-      <div className="row my-3">
-        <h1>user data</h1>
-
-        <ul>
-        {Array.isArray(userData) && userData.map(item => {
-          return <li>{item}</li>;
-        })}
-      </ul>
-      </div>
     </div>
   )
 }
