@@ -9,7 +9,7 @@ export default function Accountsetting(props) {
   
   const context = useContext(userContext);
 
-  const { userData,setuserData, getUserSetting } = context;
+  const { userData,setuserData, getUserSetting, updateUserSetting } = context;
 
 
   let navigate = useNavigate();
@@ -21,53 +21,28 @@ export default function Accountsetting(props) {
     }
     // eslint-disable-next-line
   },[]);
-
-  
-  const [accountdata, setAccountdata] = useState({fname: "", lname: "", gender: "", email: ""});
-  const [credentials, seCredentials] = useState({fname: ""});
-
-
-  
-
-  
-
- const host = process.env.REACT_APP_BACKEND_URL;
-/*   const getuserData = async () =>{
-    //API CALL to display data in fields
-    const response = await fetch(`${host}/api/auth/getuser/`, {
-        method: "GET", // *GET, POST, PUT, DELETE, etc.
-        headers: {
-        "Content-Type": "application/json",
-        "auth-token": localStorage.getItem('token')
-        },
-    });
-    const json = await response.json();
-    //setAccountdata()
-    //const {fname, lname, gender, email} = json;
-    console.log(json);
-    //console.log(fname);
-}
-
-*/
+  //const [credentials, setCredentials] = useState({fname: "", lname: "", gender: "", email: ""});
+  //const host = process.env.REACT_APP_BACKEND_URL;
 
 
 
   
   const handleSubmit = async (e) =>{
       e.preventDefault();
-      const {fname,lname,gender, email, password} = credentials;
+      updateUserSetting(userData.fname, userData.lname, userData.gender, userData.email);
 
 
+      /*const {fname,lname,gender, email, password} = credentials;
       //API CALL
       const response = await fetch(`${host}/api/auth/createuser/`, {
           method: "GET", // *GET, POST, PUT, DELETE, etc.
           headers: {
           "Content-Type": "application/json",
           },
-          body: JSON.stringify({fname,lname,gender, email, password}), // body data type must match "Content-Type" header
+          body: JSON.stringify({fname,lname,gender, email}), // body data type must match "Content-Type" header
       });
       const json = await response.json();
-      //console.log(json)
+      console.log(json)
       if(json.success===true){
           // Save the auth token and redirect
           localStorage.setItem('token',json.authToken);
@@ -75,11 +50,11 @@ export default function Accountsetting(props) {
           props.showAlert("Account created successfully","success")
       }else{
           props.showAlert("Invalid Credentials","danger")
-      }
+      }*/
   }
   
   const onChange = (e) =>{
-    seCredentials({...credentials,[e.target.name]:e.target.value})
+    setuserData({...userData,[e.target.name]:e.target.value})
   }
   return (
     <div>
@@ -104,9 +79,9 @@ export default function Accountsetting(props) {
         </div>
         <div className="mb-3">
           <label htmlFor="email" className="form-label">Email address</label>
-          <input type="email" required  className="form-control" id="email" name="email"  value={userData.email}  onChange={onChange}  aria-describedby="emailHelp"/>
+          <input type="email" required  className="form-control" id="email" name="email"  value={userData.email} onChange={onChange}  aria-describedby="emailHelp"/>
         </div>
-        <button type="submit" className="btn btn-primary">Submit</button>
+        <button type="submit" onSubmit={handleSubmit} className="btn btn-primary">Submit</button>
       </form>
       
       

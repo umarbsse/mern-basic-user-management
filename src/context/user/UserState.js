@@ -20,9 +20,18 @@ export default function UserState(props) {
           setuserData(json_response);
      };
 
+
+
      //Update User Account Data
+    const updateUserSetting = async (fname, lname, gender, email) => {
+      console.log("Update user setting")  ;
+      console.log(fname+" = "+lname+" = "+gender+" = "+email)  ;
+    };
+     
+
+
   return (
-    <UserContext.Provider value={{ userData,setuserData, getUserSetting }}>
+    <UserContext.Provider value={{ userData,setuserData, getUserSetting, updateUserSetting }}>
       {props.children}
     </UserContext.Provider>
   )
