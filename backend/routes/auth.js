@@ -137,23 +137,11 @@ router.get("/getuser",fetchuser, async (req, res) => {
 
 
 //Route 4: Update user account setting using : PUT "/api/auth/updateaccountsetting". required login
-router.put("/updateaccountsetting/:id",
-    [
-        body("fname", "Enter a valid first name").isLength({ min: 3 }).escape()
-    ], fetchuser, async (req, res) => {
+router.put("/updateaccountsetting/:id", fetchuser, async (req, res) => {
         let success = false;
     try {
         let user_id = req.params.id;
-        //If ther are error return bad request and the errors
-
-        const errors = validationResult(req);
-
-        //IF VALIDATION FAILED
-        if (!errors.isEmpty()) {
-            //res.send({ success,errors: errors.array() });
-
-            res.status(401).send({ success, response:errors.msg});
-        }
+        
         const { fname, lname, gender, email } = req.body;
         const newAccountSetting = {};
         if (fname) {
