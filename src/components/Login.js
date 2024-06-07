@@ -20,13 +20,12 @@ export default function Login(props) {
             body: JSON.stringify({email:credentials.email,password:credentials.password}), // body data type must match "Content-Type" header
         });
         const json = await response.json();
-        console.log(json)
+        //console.log(json)
         if(json.success===true){
             // Save the auth token and redirect
             localStorage.setItem('token',json.authToken);
             navigate("/dashboard");
             props.showAlert("Logined successfully","success")
-
         }else{
             props.showAlert("Invalid Credentials","danger")
         }

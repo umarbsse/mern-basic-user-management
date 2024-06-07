@@ -5,7 +5,9 @@ const bcrypt = require('bcryptjs');
 var jwt = require('jsonwebtoken');
 const router = express.Router();
 const JWT_SECRET = "UMERISNOTaGOODB$Y"
-var fetchuser = require('../middleware/fetchuser')
+var fetchuser = require('../middleware/fetchuser');
+
+const failed_req_msg="Internal Server Error 123123 12312 3";
 
 //Route 1: Creat a User using : POST "/api/auth/createuser". No login required, input values and create user account
 router.post(
@@ -123,14 +125,89 @@ router.post(
 //Route 3: Get loggedin User Details using : POST "/api/auth/getuser". required login
 router.get("/getuser",fetchuser, async (req, res) => {
     try {
-        userId = req.user.id;
+        let userId = req.user.id;
         const user = await User.findById(userId).select("-password")
         res.send(user)
     } catch (error) {
-        console.error(error.message);
-        res.status(500).send("Internal Server Error");
+        //console.error(error.message);
+        res.status(500).send(failed_req_msg);
     }
 }
 )
+
+
+//Route 4: Update user account setting using : PUT "/api/auth/updateaccountsetting". required login
+router.put("/updateaccountsetting/:id",
+    [
+        body("fname", "Enter a valid first name").isLength({ min: 3 }).escape()
+    ], fetchuser, async (req, res) => {
+        let success = false;
+    try {
+        let user_id = req.params.id;
+        //If ther are error return bad request and the errors
+
+        const errors = validationResult(req);
+
+        //IF VALIDATION FAILED
+        if (!errors.isEmpty()) {
+            //res.send({ success,errors: errors.array() });
+
+            res.status(401).send({ success, response:errors.msg});
+        }
+        const { fname, lname, gender, email } = req.body;
+        const newAccountSetting = {};
+        if (fname) {
+            newAccountSetting.fname = fname
+        }
+        if (lname) {
+            newAccountSetting.lname = lname
+        }
+        if (email) {
+            newAccountSetting.email = email
+        }
+        if (gender) {
+            newAccountSetting.gender = gender
+        }
+        //FIND THE NOTE TO B UPDATED
+        if (user_id.match(/^[0-9a-fA-F]{24}$/)) {
+            // Yes, it's a valid ObjectId, proceed with `findById` call.
+            let is_account_setting = await User.findById(user_id);
+            is_account_setting = await User.findByIdAndUpdate(req.params.id, { $set: newAccountSetting }, { new: true })
+            success = true;
+            res.json({ success:true, is_account_setting});
+        }else{
+            res.status(401).send({ success, response:"Not Allowed"});
+        }     
+    } catch (error) {
+        res.status(500).send({ success, response:failed_req_msg});
+    }
+})
+
+//Route 5: Update user account setting using : PUT "/api/auth/updateaccountsetting". required login
+router.put("/updateaccountsettingpassword/:id", fetchuser, async (req, res) => {
+    try {
+        let user_id = req.params.id;
+        let success = false;
+        const { password, confirm_password } = req.body;
+        const newAccountSetting = {};
+        const salt = await bcrypt.genSalt(10)
+        const secPass = await bcrypt.hash(password,salt)
+        if (password) {
+            newAccountSetting.password = secPass
+        }
+        //FIND THE User password  TO B UPDATED
+        if (user_id.match(/^[0-9a-fA-F]{24}$/)) {
+            // Yes, it's a valid ObjectId, proceed with `findById` call.
+            let is_account_setting = await User.findById(user_id);
+            is_account_setting = await User.findByIdAndUpdate(req.params.id, { $set: newAccountSetting }, { new: true });
+            success = true;
+            res.json({ success, is_account_setting});
+        }else{
+            res.status(401).send({ success, response:"Not Allowed"});
+        }     
+    } catch (error) {
+        res.status(500).send({ success, response:failed_req_msg});
+    }
+})
 
 module.exports = router;

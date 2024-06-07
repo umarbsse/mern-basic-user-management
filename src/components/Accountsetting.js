@@ -20,39 +20,16 @@ export default function Accountsetting(props) {
       getUserSetting();
     }
     // eslint-disable-next-line
-  },[]);
-  //const [credentials, setCredentials] = useState({fname: "", lname: "", gender: "", email: ""});
-  //const host = process.env.REACT_APP_BACKEND_URL;
-
-
-
-  
+  },[]);  
   const handleSubmit = async (e) =>{
       e.preventDefault();
-      updateUserSetting(userData.fname, userData.lname, userData.gender, userData.email);
-
-
-      /*const {fname,lname,gender, email, password} = credentials;
-      //API CALL
-      const response = await fetch(`${host}/api/auth/createuser/`, {
-          method: "GET", // *GET, POST, PUT, DELETE, etc.
-          headers: {
-          "Content-Type": "application/json",
-          },
-          body: JSON.stringify({fname,lname,gender, email}), // body data type must match "Content-Type" header
-      });
-      const json = await response.json();
-      console.log(json)
-      if(json.success===true){
-          // Save the auth token and redirect
-          localStorage.setItem('token',json.authToken);
-          navigate("/login");
-          props.showAlert("Account created successfully","success")
+      let json_response = await updateUserSetting(userData._id,userData.fname, userData.lname, userData.gender, userData.email);
+      if(json_response.success===true){
+        props.showAlert("Account Setting Update","success")
       }else{
-          props.showAlert("Invalid Credentials","danger")
-      }*/
+        props.showAlert(json_response.response,"danger")
+      }
   }
-  
   const onChange = (e) =>{
     setuserData({...userData,[e.target.name]:e.target.value})
   }
