@@ -53,8 +53,7 @@ export default function UserState(props) {
           "auth-token": localStorage.getItem('token'),
           // 'Content-Type': 'application/x-www-form-urlencoded',
         },
-        body: JSON.stringify({password}), // body data type must match "Content-Type" header
-  
+        body: JSON.stringify({password, confirm_password}), // body data type must match "Content-Type" header
       });
       const json_response = await response.json();
       //console.log(json_response);

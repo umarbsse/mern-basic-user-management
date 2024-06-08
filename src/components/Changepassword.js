@@ -19,8 +19,10 @@ export default function Changepassword(props) {
   
   const handleSubmit = async (e) =>{
     e.preventDefault();
-    let json_response = await updateUserPassword(userData._id,e.target.password.value,e.target.confirm_password.value);
-    console.log(json_response)
+    let password = e.target.password.value;
+    let confirm_password = e.target.confirm_password.value;
+    let json_response = await updateUserPassword(userData._id, password, confirm_password);
+    //console.log(json_response)
     if(json_response.success===true){
       props.showAlert("Account password Update","success")
     }else{

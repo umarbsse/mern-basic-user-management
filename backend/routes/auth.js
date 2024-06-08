@@ -27,7 +27,11 @@ router.post(
 
         //IF VALIDATION FAILED
         if (!errors.isEmpty()) {
-            res.send({ success,errors: errors.array() });
+            let error_txt="";
+            let errors_list = errors.array();
+            errors_list.forEach((err) => error_txt = error_txt.concat(err['msg']+", "));
+            res.status(401).send({ success, response:error_txt});
+            return;
         }
         //Check wether the user with this email exist already
 
@@ -137,11 +141,25 @@ router.get("/getuser",fetchuser, async (req, res) => {
 
 
 //Route 4: Update user account setting using : PUT "/api/auth/updateaccountsetting". required login
-router.put("/updateaccountsetting/:id", fetchuser, async (req, res) => {
+router.put("/updateaccountsetting/:id",fetchuser,
+    [
+        body("fname", "Enter a valid first name").isLength({ min: 3 }).escape(),
+        body("lname", "Enter a valid last name").escape(),
+        body("gender", "Enter a valid gender").escape(),
+        body("email", "Enter a valid email").isEmail().escape(),
+    ], async (req, res) => {
         let success = false;
+        const errors = validationResult(req);
+        //IF VALIDATION FAILED
+        if (!errors.isEmpty()) {
+            let error_txt="";
+            let errors_list = errors.array();
+            errors_list.forEach((err) => error_txt = error_txt.concat(err['msg']+", "));
+            res.status(401).send({ success, response:error_txt});
+            return;
+        }     
     try {
         let user_id = req.params.id;
-        
         const { fname, lname, gender, email } = req.body;
         const newAccountSetting = {};
         if (fname) {
@@ -172,11 +190,28 @@ router.put("/updateaccountsetting/:id", fetchuser, async (req, res) => {
 })
 
 //Route 5: Update user account setting using : PUT "/api/auth/updateaccountsetting". required login
-router.put("/updateaccountsettingpassword/:id", fetchuser, async (req, res) => {
-    try {
-        let user_id = req.params.id;
+router.put("/updateaccountsettingpassword/:id", fetchuser,
+    [
+        body("password", "Password must be atleast 5 characters").isLength({ min: 5 }).escape()
+    ], async (req, res) => {
         let success = false;
         const { password, confirm_password } = req.body;
+        if(password!==confirm_password){
+            res.status(401).send({ success, response:"Confirm New Password must be matched with New Password field."});
+            return;
+        }
+        const errors = validationResult(req);
+        //IF VALIDATION FAILED
+        if (!errors.isEmpty()) {
+            let error_txt="";
+            let errors_list = errors.array();
+            errors_list.forEach((err) => error_txt = error_txt.concat(err['msg']+", "));
+            res.status(401).send({ success, response:error_txt});
+            return;
+        }     
+    try {
+        let user_id = req.params.id;
+        
         const newAccountSetting = {};
         const salt = await bcrypt.genSalt(10)
         const secPass = await bcrypt.hash(password,salt)
